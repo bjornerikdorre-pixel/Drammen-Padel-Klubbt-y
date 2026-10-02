@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drammen Padelklubb - Klubbtøy</title>
+ 
+<style>
+body {
+font-family: Arial, sans-serif;
+background: #f4f6f8;
+margin: 0;
+padding: 0;
+}
+ 
+header {
+background: #0f172a;
+color: white;
+padding: 25px;
+text-align: center;
+}
+ 
+.container {
+max-width: 1100px;
+margin: auto;
+padding: 20px;
+}
+ 
+.card {
+background: white;
+border-radius: 10px;
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+ 
+.product-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+gap: 20px;
+}
+ 
+.product img {
+width: 100%;
+border-radius: 8px;
+}
+ 
+.product h3 {
+margin-bottom: 5px;
+}
+ 
+button {
+background: #0057b8;
+color: white;
+border: none;
+padding: 12px 18px;
+border-radius: 6px;
+cursor: pointer;
+}
+ 
+button:hover {
+background: #003f84;
+}
+ 
+.cart-item {
+margin-bottom: 10px;
+border-bottom: 1px solid #ddd;
+padding-bottom: 10px;
+}
+ 
+input, select {
+width: 100%;
+padding: 8px;
+margin-top: 5px;
+margin-bottom: 10px;
+}
+ 
+footer {
+text-align: center;
+padding: 20px;
+color: #666;
+}
+</style>
+</head>
+ 
+<body>
+ 
+<header>
+<h1>Drammen Padelklubb</h1>
+<h2>Bestilling av Klubbtøy</h2>
+</header>
+ 
+<div class="container">
+ 
+<div class="card">
+<h2>Kontaktinformasjon</h2>
+ 
+<label>Navn</label>
+<input type="text" id="name">
+ 
+<label>Telefonnummer</label>
+<input type="text" id="phone">
+ 
+</div>
+ 
+<div class="product-grid">
+ 
+<div class="card product">
+https://via.placeholder.com/300x300.png?text=Produktbilde
+<h3>T-skjorte Herre</h3>
+<p>Pris: 320 kr</p>
+ 
+<select id="size1">
+<option>S</option>
+<option>M</option>
+<option>L</option>
+<option>XL</option>
+<option>XXL</option>
+</select>
+ 
+<input type="number" id="qty1" min="1" value="1">
+ 
+<button onclick="addToCart('T-skjorte Herre', 'size1', 'qty1')">
+Legg til
+</button>
+</div>
+ 
+<div class="card product">
+https://via.placeholder.com/300x300.png?text=Produktbilde
+<h3>T-skjorte Dame</h3>
+<p>Pris: 320 kr</p>
+ 
+<select id="size2">
+<option>XS</option>
+<option>S</option>
+<option>M</option>
+<option>L</option>
+<option>XL</option>
+</select>
+ 
+<input type="number" id="qty2" min="1" value="1">
+ 
+<button onclick="addToCart('T-skjorte Dame', 'size2', 'qty2')">
+Legg til
+</button>
+</div>
+ 
+<div class="card product">
+https://via.placeholder.com/300x300.png?text=Produktbilde
+<h3>T-skjorte Junior</h3>
+<p>Pris: 280 kr</p>
+ 
+<select id="size3">
+<option>JR</option>
+</select>
+ 
+<input type="number" id="qty3" min="1" value="1">
+ 
+<button onclick="addToCart('T-skjorte Junior', 'size3', 'qty3')">
+Legg til
+</button>
+</div>
+ 
+</div>
+ 
+<div class="card">
+<h2>Bestilling</h2>
+ 
+<div id="cart"></div>
+ 
+<button onclick="saveOrder()">
+Registrer Bestilling
+</button>
+ 
+</div>
+ 
+<div class="card">
+<h2>Bulkoversikt</h2>
+ 
+<p>Denne tabellen brukes av klubben ved samlet bestilling.</p>
+ 
+<table border="1" width="100%" id="summary">
+<tr>
+<th>Produkt</th>
+<th>Størrelse</th>
+<th>Antall</th>
+</tr>
+</table>
+ 
+</div>
+ 
+</div>
+ 
+<footer>
+Drammen Padelklubb
+</footer>
+ 
+<script>
+ 
+let cart = [];
+let summary = {};
+ 
+function addToCart(product,sizeId,qtyId){
+ 
+let size = document.getElementById(sizeId).value;
+let qty = parseInt(document.getElementById(qtyId).value);
+ 
+cart.push({
+product,
+size,
+qty
+});
+ 
+renderCart();
+ 
+}
+ 
+function renderCart(){
+ 
+let html = "";
+ 
+cart.forEach(item => {
+ 
+html += `
+<div class="cart-item">
+${item.product} - ${item.size} - ${item.qty} stk
+</div>
+`;
+ 
+});
+ 
+document.getElementById("cart").innerHTML = html;
+ 
+}
+ 
+function saveOrder(){
+ 
+let name = document.getElementById("name").value;
+let phone = document.getElementById("phone").value;
+ 
+if(!name || !phone){
+alert("Fyll inn navn og telefonnummer");
+return;
+}
+ 
+cart.forEach(item=>{
+ 
+let key = item.product + "_" + item.size;
+ 
+if(!summary[key]){
+summary[key] = {
+product:item.product,
+size:item.size,
+qty:0
+};
+}
+ 
+summary[key].qty += item.qty;
+ 
+});
+ 
+updateSummary();
+ 
+alert("Bestillingen er registrert");
+ 
+cart = [];
+renderCart();
+ 
+}
+ 
+function updateSummary(){
+ 
+let table = `
+<tr>
+<th>Produkt</th>
+<th>Størrelse</th>
+<th>Antall</th>
+</tr>
+`;
+ 
+Object.values(summary).forEach(item=>{
+ 
+table += `
+<tr>
+<td>${item.product}</td>
+<td>${item.size}</td>
+<td>${item.qty}</td>
+</tr>
+`;
+ 
+});
+ 
+document.getElementById("summary").innerHTML = table;
+ 
+}
+ 
+</script>
+ 
+</body>
+</html>
